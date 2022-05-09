@@ -1,0 +1,25 @@
+{
+  "name": "expressboard",
+  "version": "1.0.0",
+  "description": "이 저장소의 코드는\r [http://a-mean-blog.com/ko/blog/Node-JS-첫걸음/게시판-만들기](http://a-mean-blog.com/ko/blog/Node-JS-첫걸음/게시판-만들기)에서 작성되었습니다.\r <br>",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "bcryptjs": "^2.4.3",
+    "body-parser": "^1.20.0",
+    "connect-flash": "^0.1.1",
+    "ejs": "^3.1.7",
+    "express": "^4.18.1",
+    "express-session": "^1.17.2",
+    "method-override": "^3.0.0",
+    "mongoose": "^6.3.2",
+    "npm-check-updates": "^12.5.11",
+    "passport": "^0.5.2",
+    "passport-local": "^1.0.0"
+  }
+}
