@@ -11,6 +11,7 @@ const postSchema = mongoose.Schema({
   author:{type:mongoose.Schema.Types.ObjectId, ref:'user', required:true},
   views:{type:Number, default:0},
   numId:{type:Number},
+  attachment:{type:mongoose.Schema.Types.ObjectId, ref:'file'},
   createdAt:{type:Date, default:Date.now},
   updatedAt:{type:Date},
 }); //ref:'user'를 통해 이 항목의 데이터가 user collection의 id와 연결됨을 mongoose에 알립니다. 

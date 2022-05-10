@@ -2,9 +2,12 @@
 //==dependencies==//
 const express  = require('express');
 const router = express.Router();
+const multer = require('multer');
+const upload = multer({ dest: 'uploadedFiles/' });
 const Post = require('../models/Post');
 const User = require('../models/User');
 const Comment = require('../models/Comment');
+const File = require('../models/File');
 const util = require('../util');
 
 
@@ -77,13 +80,20 @@ router.get('/new', util.isLoggedin, (req, res) => {
   res.render('posts/new', { post:post, errors:errors });
 });
 //create//
-router.post('/', util.isLoggedin, (req, res) => {
+router.post('/', util.isLoggedin, upload.single('attachment'), async (req, res) => {
+  let attachment = req.file ? await File.createNewInstance(req.file, req.user._id) : undefined;
+  req.body.attachment = attachment;
   req.body.author = req.user._id;
   Post.create(req.body, (err, post) => {
     if(err) {
       req.flash('post', req.body);
       req.flash('errors', util.parseError(err));
       return res.redirect('/posts/new'+res.locals.getPostQueryString());
+    }
+
+    if(attachment) {
+      attachment.postId = post._id;
+      attachment.save();
     }
     res.redirect('/posts'+res.locals.getPostQueryString(false, { page:1, searchText:'' }));
   });
@@ -100,7 +110,7 @@ router.get('/:id', (req, res) => {
   다음 callback으로 전달합니다.
   */
   Promise.all([
-      Post.findOne({_id:req.params.id}).populate({ path: 'author', select: 'username' }),
+      Post.findOne({_id:req.params.id}).populate({ path: 'author', select: 'username' }).populate({path:'attachment', match:{isDeleted:false}}),
       Comment.find({post:req.params.id}).sort('createdAt').populate({ path: 'author', select: 'username' })
     ])
     .then(([post, comments]) => {
