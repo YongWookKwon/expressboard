@@ -16,7 +16,7 @@ Query string은 문자열로 전달되기 때문에 parseInt사용
 await은 해당 객체가 완료될 때까지 다음 코드로 진행하지 않고 
 기다렸다가 해당 객체가 완료되면 값을 반환합니다.
 */
-router.get('/', async function(req, res) {
+router.get('/', async (req, res) => {
   let page = Math.max(1, parseInt(req.query.page));
   let limit = Math.max(1, parseInt(req.query.limit));
   page = !isNaN(page) ? page : 1;
@@ -53,6 +53,8 @@ router.get('/', async function(req, res) {
           author: {
             username: 1,
           },
+          views: 1,
+          numId: 1,
           createdAt: 1,
           commentCount: { $size: '$comments'}
       } },
@@ -102,6 +104,8 @@ router.get('/:id', (req, res) => {
       Comment.find({post:req.params.id}).sort('createdAt').populate({ path: 'author', select: 'username' })
     ])
     .then(([post, comments]) => {
+      post.views++;
+      post.save();
       let commentTrees = util.convertToTrees(comments, '_id','parentComment','childComments');
       res.render('posts/show', { post:post, commentTrees:commentTrees, commentForm:commentForm, commentError:commentError});
     })
@@ -176,7 +180,7 @@ async function createSearchQuery(queries) {
     }
 
     if(searchTypes.indexOf('author!')>=0) {
-      const user = await User.findOne({ username: queries.searchText }).exec();
+      let user = await User.findOne({ username: queries.searchText }).exec();
       if(user) postQueries.push({author:user._id});
     } else if(searchTypes.indexOf('author')>=0) {
       let users = await User.find({ username: { $regex: new RegExp(queries.searchText, 'i') } }).exec();

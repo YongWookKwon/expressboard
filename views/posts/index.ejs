@@ -14,7 +14,9 @@
 
         <thead class="thead-light">
           <tr>
+            <th scope="col" class="numId">#</th>
             <th scope="col">Title</th>
+            <th scope="col" class="views">Views</th>
             <th scope="col" class="author">Author</th>
             <th scope="col" class="date">Date</th>
           </tr>
@@ -23,11 +25,12 @@
         <tbody>
           <% if(posts == null || posts.length == 0){ %>
             <tr>
-              <td colspan=2> There is no data to show :( </td>
+              <td colspan=5> There is no data to show :( </td>
             </tr>
           <% } %>
           <% posts.forEach(function(post) { %>
             <tr>
+              <td class="numId"><%= post.numId %></td>
               <td>
                 <a href="/posts/<%= post._id %><%= getPostQueryString() %>" class="title-container">
                   <div data-search-highlight="title" class="title-ellipsis ellipsis float-left">
@@ -38,6 +41,7 @@
                   <% } %>
                 </a>
               </td>
+              <td class="views"><%= post.views %></td>
               <td class="author">
                 <a href="/posts<%= getPostQueryString(false, { searchType:'author!', searchText:post.author.username }) %>">
                   <div data-search-highlight="author" class="ellipsis"><%= post.author ? post.author.username : "" %></div>
@@ -49,17 +53,13 @@
             </tr>
           <% }) %>
         </tbody>
-
       </table>
-
       <div class="row mb-3">
-
         <div class="col-2">
           <% if(isAuthenticated){ %>
             <a class="btn btn-primary" href="/posts/new<%= getPostQueryString() %>">New</a>
           <% } %>
         </div>
-
         <nav class="col-8">
           <%
             var offset = 2;
@@ -82,12 +82,9 @@
             </li>
           </ul>
         </nav>
-
       </div>
-
       <form action="/posts" method="get" class="post-index-tool">
         <div class="form-row">
-
           <div class="form-group col-3">
             <label>Show</label>
             <select name="limit" class="custom-select" onchange="this.parentElement.parentElement.parentElement.submit()">
@@ -96,7 +93,6 @@
               <option value="20" <%= limit==20?'selected':'' %>>20 posts</option>
             </select>
           </div>
-
           <div class="form-group col-9">
             <label>Search</label>
             <div class="input-group">
@@ -112,10 +108,8 @@
               </div>
             </div>
           </div>
-
         </div>
       </form>
-
     </div>
   </body>
 </html>
