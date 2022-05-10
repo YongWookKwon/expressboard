@@ -1,4 +1,1 @@
-# MEN 게시판
-이 저장소의 코드는
-[http://a-mean-blog.com/ko/blog/Node-JS-첫걸음/게시판-만들기](http://a-mean-blog.com/ko/blog/Node-JS-첫걸음/게시판-만들기)에서 작성되었습니다.
-<br>
+<p>익스프레스로 게시판 만들기, 페이징, 댓글, 대댓글, 검색기능</p>
