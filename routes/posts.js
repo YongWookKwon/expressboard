@@ -139,17 +139,24 @@ router.get('/:id/edit', util.isLoggedin, checkPermission, (req, res) => {
   let post = req.flash('post')[0];
   let errors = req.flash('errors')[0] || {};
   if(!post) {
-    Post.findOne({_id:req.params.id}, (err, post) => {
+    Post.findOne({_id:req.params.id})
+      .populate({path:'attachment', match:{isDeleted:false}})
+      .exec((err, post) => {
         if(err) return res.json(err);
         res.render('posts/edit', { post:post, errors:errors });
-      });
+      });   
   } else {
     post._id = req.params.id;
     res.render('posts/edit', { post:post, errors:errors });
   }
 });
 //update//
-router.put('/:id', util.isLoggedin, checkPermission, (req, res) => {
+router.put('/:id', util.isLoggedin, checkPermission, upload.single('newAttachment'), async (req, res) => {
+  let post = await Post.findOne({_id:req.params.id}).populate({path:'attachment', match:{isDeleted:false}});
+  if(post.attachment && (req.file || !req.body.attachment)) {
+    post.attachment.processDelete();
+  }
+  req.body.attachment = req.file ? await File.createNewInstance(req.file, req.user._id, req.params.id) : post.attachment;
   req.body.updatedAt = Date.now();
   Post.findOneAndUpdate({_id:req.params.id}, req.body, {runValidators:true}, (err, post) => {
     if(err) {
